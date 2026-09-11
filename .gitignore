@@ -1,0 +1,6 @@
+/target/
+/targets.conf
+Cargo.lock
+*.exe
+*.sys
+!driver/*.sys
