@@ -36,7 +36,11 @@ jobs:
           Copy-Item driver/Alinubx.sys release/
           Copy-Item README.md release/
           Copy-Item WRITEUP.md release/
+          Copy-Item THREAT_MODEL.md release/
           Copy-Item metadata/drivers.json release/
+          Copy-Item detection/sigma/driver_load_win_cruciferra_byovd.yml release/
+          Copy-Item detection/yara/cruciferra_drivers.yar release/
+          Copy-Item detection/telemetry/README.md release/
           Get-FileHash release/* | Format-Table
 
       - name: Create GitHub release
