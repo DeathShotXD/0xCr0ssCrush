@@ -1,0 +1,53 @@
+{
+  "repository": "0xCr0ssCrush",
+  "primitive_classification": [
+    {
+      "primitive_family": "PROCESS_CONTROL",
+      "primitive": "PROCESS_TERMINATION"
+    }
+  ],
+  "drivers": [
+    {
+      "filename": "DCRCVDrv.sys",
+      "sha256": "87e8d39db624f37d3e77aedf487a2dfd197f71a4730ea74f4e7a4341deaec2ff",
+      "sha1": "47d922b0fd5d704025d14ef98ded46e74830a423",
+      "md5": "567c158ee0858f8e941d4ab7a6c18dbc",
+      "architecture": "AMD64",
+      "publisher": "MocoMsys / MOCOMSYS",
+      "company": "MOCOMSYS & DCRC",
+      "version": "1.0.0 series",
+      "device": "\\\\.\\DCRCVDRV_U",
+      "ioctl": "0x2205C0",
+      "primitive_family": "PROCESS_CONTROL",
+      "primitive": "PROCESS_TERMINATION",
+      "campaign": "Cruciferra loader",
+      "references": [
+        "https://www.esentire.com/blog/malware-as-a-service-cocktail-errtraffic-and-cruciferra-killing-your-edr-since-2025",
+        "https://www.loldrivers.io/drivers/89643454-e38b-41cb-853d-abf649a104a5/"
+      ],
+      "blocklist_observation_date": "2026-09-08",
+      "blocklist_snapshot": "driver-policy-10.0.29545.0"
+    },
+    {
+      "filename": "Alinubx.sys",
+      "sha256": "611b3ba687b7f46319a19609605ddfe5225e6d85277d8e923eea3fdb6f7b5b61",
+      "sha1": "172c5ce3afab6d63fe12a7e036f20271b9d09c13",
+      "md5": "10b3049f4a954665512eca5d24728c89",
+      "architecture": "AMD64",
+      "publisher": "Microsoft Windows Hardware Compatibility Publisher",
+      "company": "CnCrypt Foundation",
+      "version": "unknown",
+      "device": "\\\\.\\Alinubx",
+      "ioctl": "0x222024",
+      "primitive_family": "PROCESS_CONTROL",
+      "primitive": "PROCESS_TERMINATION",
+      "campaign": "Cruciferra loader (associated)",
+      "references": [
+        "https://www.esentire.com/blog/malware-as-a-service-cocktail-errtraffic-and-cruciferra-killing-your-edr-since-2025",
+        "https://www.loldrivers.io/drivers/84a3007a-de5e-4622-bfc5-f05d927c3618/"
+      ],
+      "blocklist_observation_date": "2026-09-08",
+      "blocklist_snapshot": "driver-policy-10.0.29545.0"
+    }
+  ]
+}

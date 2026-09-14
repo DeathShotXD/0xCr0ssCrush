@@ -1,0 +1,27 @@
+# selected wide strings
+\Device\DCRCVDRV_U
+\DosDevices\DCRCVDRV_U
+\BaseNamedObjects\__DCRCV_CHILD_PROCESS_MON_SHARE_EVENT_32__
+\BaseNamedObjects\__DCRCV_CHILD_PROCESS_MON_SHARE_EVENT_64__
+\Device\DCRCFS
+\BaseNamedObjects\__DCRCV_U_WFP_FILTER_ADD_
+DCRCV WFP Filter Session
+DCRCV WFP Filter Auth Connect V4 Callout
+DCRCV WFP Filter Auth Connect V6 Callout
+DCRCV WFP Filter Sub-Layer
+DCRCV WFP Filter Auth Connect V4 Filiter
+DCRCV WFP Filter Auth Connect V6 Filiter
+spoolsv.exe
+svchost.exe
+alg.exe
+Capture.exe
+mpsinfo.exe
+allegro.exe
+cdsMsgServer.exe
+cdsNameServer.exe
+\BaseNamedObjects\__DCRCV_U_FILE_DUPLICATE_MON_SHARE_EVENT__
+\BaseNamedObjects\__DCRCV_U_PROGRAM_BLOCK_MON_SHARE_EVENT__
+DCRCVDRV_U
+LEGACY_DCRCVDRV_U
+\BaseNamedObjects\__DCRCV_U_NETWORK_BLOCK_MON_SHARE_EVENT__
+\BaseNamedObjects\__DCRCV_U_DEVICE_BLOCK_MON_SHARE_EVENT__

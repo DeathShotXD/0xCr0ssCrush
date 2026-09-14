@@ -1,0 +1,26 @@
+{
+  "samples": [
+    {
+      "filename": "DCRCVDrv.sys",
+      "sha256": "87e8d39db624f37d3e77aedf487a2dfd197f71a4730ea74f4e7a4341deaec2ff",
+      "size_bytes": 141240,
+      "source": "LOLDrivers binary mirror",
+      "verified_against": [
+        "eSentire TRU IoC list (2026-08-19)",
+        "LOLDrivers YAML registry 89643454-e38b-41cb-853d-abf649a104a5"
+      ],
+      "carried_in_repo": "driver/DCRCVDrv.sys"
+    },
+    {
+      "filename": "Alinubx.sys",
+      "sha256": "611b3ba687b7f46319a19609605ddfe5225e6d85277d8e923eea3fdb6f7b5b61",
+      "size_bytes": 538664,
+      "source": "LOLDrivers binary mirror",
+      "verified_against": [
+        "eSentire TRU reporting (2026-08-19)",
+        "LOLDrivers YAML registry 84a3007a-de5e-4622-bfc5-f05d927c3618"
+      ],
+      "carried_in_repo": "driver/Alinubx.sys"
+    }
+  ]
+}

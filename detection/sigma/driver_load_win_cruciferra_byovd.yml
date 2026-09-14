@@ -1,0 +1,35 @@
+title: Service Creation and Driver Load for Cruciferra-Employed BYOVD Drivers
+id: 07c3f26a-1f0a-4b6d-9001-3c5a3f0d1a02
+status: experimental
+description: Detects the service registration and driver image loads matching the
+    DCRCVDrv.sys and Alinubx.sys samples associated with the Cruciferra loader.
+references:
+    - https://www.esentire.com/blog/malware-as-a-service-cocktail-errtraffic-and-cruciferra-killing-your-edr-since-2025
+tags:
+    - attack.defense-evasion
+    - attack.t1068
+    - attack.t1543.003
+author: 0xCr0ssCrush research
+date: 2026/09/10
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection_service:
+        Image|endswith:
+            - '\sc.exe'
+        CommandLine|contains|all:
+            - 'type= kernel'
+            - 'carriage DLL'           # tightening vs. noise; see caveats
+    selection_driver_load:
+        Hashes:
+            - SHA256=87e8d39db624f37d3e77aedf487a2dfd197f71a4730ea74f4e7a4341deaec2ff
+            - SHA256=611b3ba687b7f46319a19609605ddfe5225e6d85277d8e923eea3fdb6f7b5b61
+    condition: selection_driver_load
+falsepositives:
+    - Legitimate vendor installations of the source software suites
+    - Authorized red-team activity
+level: high
+caveats:
+    - Hash matching is snapshot-dependent; re-import after re-cataloging.
+    - The service-creation branch is intentionally loose; prefer the driver hash branch in high-noise environments.

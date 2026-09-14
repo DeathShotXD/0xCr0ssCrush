@@ -22,20 +22,30 @@ pub fn find_running(targets: &[&str]) -> Vec<(String, u32)> {
         ..Default::default()
     };
     if unsafe { Process32FirstW(snap, &mut e) }.is_err() {
-        unsafe { let _ = CloseHandle(snap); }
+        unsafe {
+            let _ = CloseHandle(snap);
+        }
         return r;
     }
     loop {
         let name = String::from_utf16_lossy(
-            &e.szExeFile[..e.szExeFile.iter().position(|&c| c == 0).unwrap_or(e.szExeFile.len())],
+            &e.szExeFile[..e
+                .szExeFile
+                .iter()
+                .position(|&c| c == 0)
+                .unwrap_or(e.szExeFile.len())],
         );
         for &t in targets {
             if name.eq_ignore_ascii_case(t) {
                 r.push((name.clone(), e.th32ProcessID));
             }
         }
-        if unsafe { Process32NextW(snap, &mut e) }.is_err() { break; }
+        if unsafe { Process32NextW(snap, &mut e) }.is_err() {
+            break;
+        }
     }
-    unsafe { let _ = CloseHandle(snap); }
+    unsafe {
+        let _ = CloseHandle(snap);
+    }
     r
 }

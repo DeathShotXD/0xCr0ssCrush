@@ -1,0 +1,31 @@
+# selected wide strings
+Alinubx ALE Connect Classify
+Alinubx ALE RecvAccept Classify
+Alinubx ALE Connect Redirect Classify
+Alinubx Inbound IPPacket Classify
+Alinubx Outbound IPPacket Classify
+Alinubx Network Sub-Layer
+Alinubx ALE Flow Established V4 Classify
+Alinubx ALE Flow Established V6 Classify
+Alinubx Stream Layer V4 Classify
+Alinubx Stream Layer V6 Classify
+Alinubx HttpRep Sub-Layer
+CAlinubx.dll
+Alinubx-x64.dll
+CcInjectToByExists ProcessId:%d, AlinubxR3 failed %x
+\Device\
+\Device\CnCryptVolumeXXX
+\Device\CnCryptVolume
+\Device\Mup\
+\Device\Mup
+\Device\*
+\REGISTRY\MACHINE\SYSTEM\CurrentControlSet\Control\DeviceContainers\%s\BaseContainers\%s
+*\Windows\Alinubx.ccf
+\Device\Alinubx
+\DosDevices\Alinubx
+Alinubx
+DeviceInstanceID
+\Device\%wZ
+*Alinubx*
+AlinubxR3.dll
+AlinubxR3-x64.dll

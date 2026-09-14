@@ -1,0 +1,67 @@
+# IOCTL dispatch, RVA 0x14964 (annotated)
+
+/tmp/opencode/dcrc.sys:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000000014964 <.text+0x3964>:
+   14964:	b9 1c 06 22 00       	mov    $0x22061c,%ecx
+   14969:	3b c1                	cmp    %ecx,%eax
+   1496b:	0f 87 5a 04 00 00    	ja     0x14dcb
+   14971:	0f 84 2f 04 00 00    	je     0x14da6
+   14977:	b9 00 06 22 00       	mov    $0x220600,%ecx
+   1497c:	3b c1                	cmp    %ecx,%eax
+   1497e:	0f 87 ea 01 00 00    	ja     0x14b6e
+   14984:	0f 84 b7 01 00 00    	je     0x14b41
+   1498a:	2d 40 05 22 00       	sub    $0x220540,%eax
+   1498f:	0f 84 61 01 00 00    	je     0x14af6
+   14995:	83 e8 04             	sub    $0x4,%eax
+   14998:	0f 84 3b 01 00 00    	je     0x14ad9
+   1499e:	83 e8 04             	sub    $0x4,%eax
+   149a1:	0f 84 f8 00 00 00    	je     0x14a9f
+   149a7:	83 e8 04             	sub    $0x4,%eax
+   149aa:	0f 84 ac 00 00 00    	je     0x14a5c
+   149b0:	83 e8 04             	sub    $0x4,%eax
+   149b3:	74 5f                	je     0x14a14
+   149b5:	83 e8 34             	sub    $0x34,%eax
+   149b8:	74 31                	je     0x149eb
+   149ba:	83 f8 3c             	cmp    $0x3c,%eax
+   149bd:	0f 85 c2 1a 00 00    	jne    0x16485
+   149c3:	48 8b 42 18          	mov    0x18(%rdx),%rax
+   149c7:	49 3b c7             	cmp    %r15,%rax
+   149ca:	0f 84 0f 1c 00 00    	je     0x165df
+   149d0:	41 83 7d 10 04       	cmpl   $0x4,0x10(%r13)
+   149d5:	0f 82 04 1c 00 00    	jb     0x165df
+   149db:	8b 08                	mov    (%rax),%ecx
+   149dd:	e8 9e d8 ff ff       	call   0x12280
+   149e2:	4c 89 7d 38          	mov    %r15,0x38(%rbp)
+   149e6:	e9 0e f8 ff ff       	jmp    0x141f9
+   149eb:	48 8b 4a 18          	mov    0x18(%rdx),%rcx
+   149ef:	49 3b cf             	cmp    %r15,%rcx
+   149f2:	0f 84 e7 1b 00 00    	je     0x165df
+   149f8:	41 83 7d 10 08       	cmpl   $0x8,0x10(%r13)
+   149fd:	0f 82 dc 1b 00 00    	jb     0x165df
+   14a03:	48 8b 09             	mov    (%rcx),%rcx
+   14a06:	e8 55 d6 ff ff       	call   0x12060
+   14a0b:	4c 89 7d 38          	mov    %r15,0x38(%rbp)
+   14a0f:	e9 07 f9 ff ff       	jmp    0x1431b
+   14a14:	33 c9                	xor    %ecx,%ecx
+   14a16:	ff 15 24 97 01 00    	call   *0x19724(%rip)        # 0x2e140
+   14a1c:	41 3a c7             	cmp    %r15b,%al
+   14a1f:	74 15                	je     0x14a36
+   14a21:	41 83 7d 10 08       	cmpl   $0x8,0x10(%r13)
+   14a26:	0f 82 de 00 00 00    	jb     0x14b0a
+   14a2c:	48 8b 45 18          	mov    0x18(%rbp),%rax
+   14a30:	48 63 48 04          	movslq 0x4(%rax),%rcx
+   14a34:	eb 1c                	jmp    0x14a52
+   14a36:	48 8b 4d 18          	mov    0x18(%rbp),%rcx
+   14a3a:	49 3b cf             	cmp    %r15,%rcx
+   14a3d:	0f 84 c7 00 00 00    	je     0x14b0a
+   14a43:	41 83 7d 10 0c       	cmpl   $0xc,0x10(%r13)
+   14a48:	0f 82 bc 00 00 00    	jb     0x14b0a
+   14a4e:	48 8b 49 04          	mov    0x4(%rcx),%rcx
+   14a52:	e8 c5 db ff ff       	call   0x1261c
+   14a57:	e9 9d f7 ff ff       	jmp    0x141f9
+   14a5c:	48 8b 4a 18          	mov    0x18(%rdx),%rcx
+

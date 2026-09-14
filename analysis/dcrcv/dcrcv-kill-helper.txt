@@ -1,0 +1,47 @@
+# termination helper, RVA 0x12280
+
+/tmp/opencode/dcrc.sys:     file format pei-x86-64
+
+
+Disassembly of section .text:
+
+0000000000012280 <.text+0x1280>:
+   12280:	48 8b c4             	mov    %rsp,%rax
+   12283:	53                   	push   %rbx
+   12284:	48 81 ec 80 00 00 00 	sub    $0x80,%rsp
+   1228b:	48 83 60 18 00       	andq   $0x0,0x18(%rax)
+   12290:	48 83 60 d0 00       	andq   $0x0,-0x30(%rax)
+   12295:	48 83 60 d8 00       	andq   $0x0,-0x28(%rax)
+   1229a:	48 83 60 e8 00       	andq   $0x0,-0x18(%rax)
+   1229f:	48 83 60 f0 00       	andq   $0x0,-0x10(%rax)
+   122a4:	48 83 60 c0 00       	andq   $0x0,-0x40(%rax)
+   122a9:	8b d9                	mov    %ecx,%ebx
+   122ab:	4c 8d 48 b8          	lea    -0x48(%rax),%r9
+   122af:	4c 8d 40 c8          	lea    -0x38(%rax),%r8
+   122b3:	48 8d 48 18          	lea    0x18(%rax),%rcx
+   122b7:	ba 01 00 00 00       	mov    $0x1,%edx
+   122bc:	c7 40 c8 30 00 00 00 	movl   $0x30,-0x38(%rax)
+   122c3:	c7 40 e0 40 02 00 00 	movl   $0x240,-0x20(%rax)
+   122ca:	48 89 58 b8          	mov    %rbx,-0x48(%rax)
+   122ce:	ff 15 14 be 01 00    	call   *0x1be14(%rip)        # 0x2e0e8
+   122d4:	85 c0                	test   %eax,%eax
+   122d6:	0f 84 93 00 00 00    	je     0x1236f
+   122dc:	48 83 a4 24 98 00 00 	andq   $0x0,0x98(%rsp)
+   122e3:	00 00 
+   122e5:	48 8d 94 24 98 00 00 	lea    0x98(%rsp),%rdx
+   122ec:	00 
+   122ed:	48 8b cb             	mov    %rbx,%rcx
+   122f0:	ff 15 42 bd 01 00    	call   *0x1bd42(%rip)        # 0x2e038
+   122f6:	85 c0                	test   %eax,%eax
+   122f8:	8b d8                	mov    %eax,%ebx
+   122fa:	74 13                	je     0x1230f
+   122fc:	48 8d 0d 0d 76 01 00 	lea    0x1760d(%rip),%rcx        # 0x29910
+   12303:	8b d0                	mov    %eax,%edx
+   12305:	e8 1c 63 01 00       	call   0x28626
+   1230a:	e9 96 00 00 00       	jmp    0x123a5
+   1230f:	48 8b 8c 24 98 00 00 	mov    0x98(%rsp),%rcx
+   12316:	00 
+   12317:	48 8d 84 24 a0 00 00 	lea    0xa0(%rsp),%rax
+   1231e:	00 
+   1231f:	45                   	rex.RB
+

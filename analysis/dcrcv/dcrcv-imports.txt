@@ -1,0 +1,6 @@
+# import capture (selected)
+	0001e038  <none>  0482  PsLookupProcessByProcessId
+	0001e0c0  <none>  0671  ZwClose
+	0001e0e8  <none>  06ac  ZwOpenProcess
+	0001e108  <none>  06ff  ZwTerminateProcess
+	0001e110  <none>  040e  ObOpenObjectByPointer
