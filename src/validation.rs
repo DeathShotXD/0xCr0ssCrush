@@ -72,3 +72,54 @@ pub fn validate_driver(path: &str) -> Result<String, String> {
         ))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn temp_file(name: &str, content: &[u8]) -> String {
+        let dir = std::env::temp_dir().join("crosscrush_test_drv");
+        std::fs::create_dir_all(&dir).unwrap();
+        let path = dir.join(name);
+        std::fs::write(&path, content).unwrap();
+        path.to_str().unwrap().to_string()
+    }
+
+    #[test]
+    fn known_sample_matches_by_filename() {
+        let meta = known_sample_for("C:\\samples\\DCRCVDrv.sys").unwrap();
+        assert_eq!(meta.file, "DCRCVDrv.sys");
+    }
+
+    #[test]
+    fn known_sample_is_case_insensitive() {
+        assert!(known_sample_for("alinubx.sys").is_some());
+    }
+
+    #[test]
+    fn unknown_sample_returns_none() {
+        assert!(known_sample_for("random.sys").is_none());
+    }
+
+    #[test]
+    fn sha256_matches_known_vector() {
+        let path = temp_file("vector.bin", b"abc");
+        assert_eq!(
+            sha256_file(&path).unwrap(),
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+        );
+    }
+
+    #[test]
+    fn validate_rejects_untracked_file() {
+        let path = temp_file("untracked.sys", b"x");
+        assert!(validate_driver(&path).is_err());
+    }
+
+    #[test]
+    fn validate_rejects_digest_mismatch() {
+        let path = temp_file("DCRCVDrv.sys", b"not the real driver");
+        let err = validate_driver(&path).unwrap_err();
+        assert!(err.contains("digest mismatch"));
+    }
+}

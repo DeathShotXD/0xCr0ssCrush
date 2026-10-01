@@ -238,6 +238,11 @@ Details in [docs/driver-provenance.md](docs/driver-provenance.md).
   remain [INFERRED]/[UNRESOLVED]; see the analysis documents.
 - Blocklist status is snapshot-specific.
 
+## Contributing
+
+Pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md) for the
+checks, the evidence labels, and the style rules.
+
 ## References
 
 - eSentire TRU - Malware-as-a-Service Cocktail: ErrTraffic and
