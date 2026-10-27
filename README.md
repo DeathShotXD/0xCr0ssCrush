@@ -1,4 +1,19 @@
-# 0xCr0ssCrush
+<p align="center">
+  <img src="assets/hero.svg" alt="0xCr0ssCrush - crossed cyan and magenta driver blades over a kernel ring, with a driver surface panel for DCRCVDrv.sys and Alinubx.sys" width="100%">
+</p>
+
+<p align="center">
+  <a href="docs/reproduction.md"><img src="https://img.shields.io/badge/Windows-10%20%7C%2011-07080d?style=flat-square&amp;logo=windows&amp;logoColor=2ad9ff" alt="Windows 10 and 11"></a>
+  <a href="Cargo.toml"><img src="https://img.shields.io/badge/Rust-research%20harness-07080d?style=flat-square&amp;logo=rust&amp;logoColor=ff2f9c" alt="Rust research harness"></a>
+  <img src="https://img.shields.io/badge/BYOVD-research%20only-ff2f9c?style=flat-square" alt="BYOVD research only">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-07080d?style=flat-square" alt="MIT license"></a>
+  <a href="https://github.com/DeathShotXD/0xCr0ssCrush/stargazers"><img src="https://img.shields.io/github/stars/DeathShotXD/0xCr0ssCrush?style=flat-square&amp;color=f6e400" alt="GitHub stars"></a>
+</p>
+
+<p align="center">
+  <strong>Two signed drivers. One process-termination primitive.</strong><br>
+  DCRCVDrv.sys and Alinubx.sys, mapped from the kernel up.
+</p>
 
 Two signed drivers. One dangerous kernel primitive. 0xCr0ssCrush is a
 Windows BYOVD research project covering the DCRCVDrv.sys and Alinubx.sys
@@ -7,12 +22,14 @@ interfaces, their kernel primitives, their provenance, and how to
 detect and defend against their abuse.
 
 <p align="center">
-  <img src="assets/crosscrush-logo.png" alt="0xCr0ssCrush logo" width="340">
+  <img src="assets/divider.svg" alt="" width="100%">
 </p>
 
-<br>
-
 ## What is 0xCr0ssCrush?
+
+<p align="center">
+  <img src="assets/crosscrush-logo.png" alt="0xCr0ssCrush logo" width="300">
+</p>
 
 A research harness and analysis package for two vulnerable signed
 drivers:
@@ -29,7 +46,7 @@ drivers:
 <br>
 
 <p align="center">
-  <img src="assets/crosscrush-banner.png" alt="0xCr0ssCrush - Windows BYOVD research" width="100%">
+  <img src="assets/divider.svg" alt="" width="100%">
 </p>
 
 ## Why this matters
@@ -74,7 +91,15 @@ The independent support for the findings:
 - Blocklist absence - snapshot dated 2026-09-08, reproducible in
   docs/blocklist-status.md.
 
+<p align="center">
+  <img src="assets/divider.svg" alt="" width="100%">
+</p>
+
 ## Cross-driver comparison
+
+<p align="center">
+  <img src="assets/chain.svg" alt="Driver chain map: DCRCVDrv.sys and Alinubx.sys each reach ZwTerminateProcess through their own IOCTL and lookup path, ending at the same detection band" width="100%">
+</p>
 
 <p align="center">
   <img src="assets/table-comparison.png" alt="Cross-driver comparison" width="100%">
@@ -167,6 +192,10 @@ Step-by-step procedure and lab hygiene in
 
 IOCTL-accepted and process-stopped are two distinct observations; the
 reproduction guide makes this explicit.
+
+<p align="center">
+  <img src="assets/divider.svg" alt="" width="100%">
+</p>
 
 ## Detection
 

@@ -1,0 +1,140 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" width="1200" height="360" role="img" aria-labelledby="ctitle cdesc">
+  <title id="ctitle">0xCr0ssCrush driver chains: DCRCVDrv.sys and Alinubx.sys to process termination</title>
+  <desc id="cdesc">Two lanes map each signed driver from its device and IOCTL through its kernel lookup path to ZwTerminateProcess, ending at a shared detection band.</desc>
+  <defs>
+    <linearGradient id="cbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#07080d"/>
+      <stop offset=".54" stop-color="#090c13"/>
+      <stop offset="1" stop-color="#130711"/>
+    </linearGradient>
+    <linearGradient id="cflow1" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2ad9ff"/>
+      <stop offset="1" stop-color="#b9f6ff"/>
+    </linearGradient>
+    <linearGradient id="cflow2" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#ff2f9c"/>
+      <stop offset="1" stop-color="#ffc0de"/>
+    </linearGradient>
+    <pattern id="cgrid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#2ad9ff" stroke-opacity=".05"/>
+    </pattern>
+    <pattern id="cdots" width="10" height="10" patternUnits="userSpaceOnUse">
+      <circle cx="1.4" cy="1.4" r=".9" fill="#f6f0e2" fill-opacity=".04"/>
+    </pattern>
+    <filter id="clg" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="2.2" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <style>
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+      .h { font-size: 15px; font-weight: 800; letter-spacing: 1.4px; }
+      .sub { font-size: 10px; letter-spacing: 1.1px; fill: #7e90a2; }
+      .node { font-size: 10px; font-weight: 700; letter-spacing: .35px; }
+      .tiny { font-size: 8.5px; letter-spacing: 1.4px; fill: #708294; }
+      .out { font-size: 11px; font-weight: 800; letter-spacing: 1px; }
+      .flow { stroke-dasharray: 5 6; animation: cflow 1.8s linear infinite; }
+      .pulse { animation: cpulse 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+      .blip { animation: cblip 3.4s ease-out infinite; transform-box: fill-box; transform-origin: center; }
+      .blink { animation: cblink 1.2s steps(1) infinite; }
+      @keyframes cflow { to { stroke-dashoffset: -44; } }
+      @keyframes cpulse { 0%,100% { opacity:.7; } 50% { opacity:1; } }
+      @keyframes cblip { 0% { transform:scale(.6); opacity:.55; } 80%,100% { transform:scale(2); opacity:0; } }
+      @keyframes cblink { 0%,49% { opacity:1; } 50%,100% { opacity:.2; } }
+      @media (prefers-reduced-motion: reduce) { .flow,.pulse,.blip,.blink { animation: none; } }
+    </style>
+  </defs>
+
+  <rect width="1200" height="360" fill="url(#cbg)"/>
+  <rect width="1200" height="360" fill="url(#cgrid)"/>
+  <rect width="1200" height="360" fill="url(#cdots)"/>
+  <text x="40" y="38" class="mono tiny" fill="#2ad9ff" opacity=".8">CASE MAP / TWO DRIVERS</text>
+  <text x="1160" y="38" text-anchor="end" class="mono tiny" fill="#ff2f9c" opacity=".8">eSENTIRE TRU / AUG 2026</text>
+
+  <!-- lane 1 -->
+  <g>
+    <rect x="40" y="62" width="1120" height="108" rx="12" fill="#080d14" fill-opacity=".82" stroke="#2ad9ff" stroke-opacity=".17"/>
+    <rect x="62" y="82" width="3" height="56" rx="1.5" fill="#2ad9ff" opacity=".75"/>
+    <text x="78" y="90" class="mono h" fill="#b9f6ff">DCRCVDrv.sys</text>
+    <text x="78" y="107" class="mono sub">MOCOMSYS (DCRC)</text>
+    <text x="78" y="123" class="mono tiny">\\.\DCRCVDRV_U</text>
+    <text x="78" y="139" class="mono tiny" fill="#2ad9ff" opacity=".7">[CONFIRMED]</text>
+
+    <path d="M394 98 H412" stroke="url(#cflow1)" stroke-width="1.2" class="flow"/>
+    <path d="M612 98 H630" stroke="url(#cflow1)" stroke-width="1.2" class="flow"/>
+    <path d="M812 98 H830" stroke="url(#cflow1)" stroke-width="1.2" class="flow"/>
+
+    <g transform="translate(230 76)">
+      <rect x="0" y="0" width="164" height="44" rx="7" fill="#2ad9ff" fill-opacity=".055" stroke="#2ad9ff" stroke-opacity=".34"/>
+      <text x="82.0" y="19.0" text-anchor="middle" class="mono node" fill="#f6f0e2">IOCTL 0x2205C0</text>
+      <text x="82.0" y="35.0" text-anchor="middle" class="mono tiny" fill="#7e90a2">4-BYTE PID</text>
+    </g>
+    <g transform="translate(416 76)">
+      <rect x="0" y="0" width="196" height="44" rx="7" fill="#2ad9ff" fill-opacity=".055" stroke="#2ad9ff" stroke-opacity=".34"/>
+      <text x="98.0" y="19.0" text-anchor="middle" class="mono node" fill="#f6f0e2">ObOpenObjectByPointer</text>
+      <text x="98.0" y="35.0" text-anchor="middle" class="mono tiny" fill="#7e90a2">HANDLE SOURCE</text>
+    </g>
+    <g transform="translate(634 76)">
+      <rect x="0" y="0" width="178" height="44" rx="7" fill="#2ad9ff" fill-opacity=".055" stroke="#2ad9ff" stroke-opacity=".34"/>
+      <text x="89.0" y="19.0" text-anchor="middle" class="mono node" fill="#f6f0e2">ZwTerminateProcess</text>
+      <text x="89.0" y="35.0" text-anchor="middle" class="mono tiny" fill="#7e90a2">KERNEL PRIMITIVE</text>
+    </g>
+
+    <g transform="translate(848 82)">
+      <text x="0" y="14" class="mono out" fill="#f6f0e2">PROCESS DOWN</text>
+      <text x="0" y="30" class="mono tiny">AV / EDR SILENCED</text>
+      <circle cx="258" cy="12" r="2.4" fill="#2ad9ff" class="blip"/>
+    </g>
+  </g>
+
+  <!-- lane 2 -->
+  <g>
+    <rect x="40" y="190" width="1120" height="108" rx="12" fill="#0c0913" fill-opacity=".82" stroke="#ff2f9c" stroke-opacity=".18"/>
+    <rect x="62" y="210" width="3" height="56" rx="1.5" fill="#ff2f9c" opacity=".75"/>
+    <text x="78" y="218" class="mono h" fill="#ffc0de">Alinubx.sys</text>
+    <text x="78" y="235" class="mono sub">CnCrypt</text>
+    <text x="78" y="251" class="mono tiny">\\.\Alinubx</text>
+    <text x="78" y="267" class="mono tiny" fill="#ff2f9c" opacity=".7">[INFERRED] EXIT STATUS</text>
+
+    <path d="M394 226 H412" stroke="url(#cflow2)" stroke-width="1.2" class="flow"/>
+    <path d="M612 226 H630" stroke="url(#cflow2)" stroke-width="1.2" class="flow"/>
+    <path d="M812 226 H830" stroke="url(#cflow2)" stroke-width="1.2" class="flow"/>
+
+    <g transform="translate(230 204)">
+      <rect x="0" y="0" width="164" height="44" rx="7" fill="#ff2f9c" fill-opacity=".055" stroke="#ff2f9c" stroke-opacity=".34"/>
+      <text x="82.0" y="19.0" text-anchor="middle" class="mono node" fill="#f6f0e2">IOCTL 0x222024</text>
+      <text x="82.0" y="35.0" text-anchor="middle" class="mono tiny" fill="#7e90a2">PID + EXIT STATUS</text>
+    </g>
+    <g transform="translate(416 204)">
+      <rect x="0" y="0" width="196" height="44" rx="7" fill="#ff2f9c" fill-opacity=".055" stroke="#ff2f9c" stroke-opacity=".34"/>
+      <text x="98.0" y="19.0" text-anchor="middle" class="mono node" fill="#f6f0e2">PsLookupProcessByProcessId</text>
+      <text x="98.0" y="35.0" text-anchor="middle" class="mono tiny" fill="#7e90a2">→ ObOpenObjectByPointer</text>
+    </g>
+    <g transform="translate(634 204)">
+      <rect x="0" y="0" width="178" height="44" rx="7" fill="#ff2f9c" fill-opacity=".055" stroke="#ff2f9c" stroke-opacity=".34"/>
+      <text x="89.0" y="19.0" text-anchor="middle" class="mono node" fill="#f6f0e2">ZwTerminateProcess</text>
+      <text x="89.0" y="35.0" text-anchor="middle" class="mono tiny" fill="#7e90a2">SAME PRIMITIVE</text>
+    </g>
+
+    <g transform="translate(848 210)">
+      <text x="0" y="14" class="mono out" fill="#f6f0e2">PROCESS DOWN</text>
+      <text x="0" y="30" class="mono tiny">SAME PRIMITIVE</text>
+      <circle cx="258" cy="12" r="2.4" fill="#ff2f9c" class="blip"/>
+    </g>
+  </g>
+
+  <!-- fallback marker -->
+  <g transform="translate(38 176)">
+    <path d="M0 0 H154" stroke="#f6e400" stroke-opacity=".32" stroke-dasharray="3 5"/>
+    <path d="M148 -3 L154 0 L148 3" fill="none" stroke="#f6e400" stroke-opacity=".6"/>
+    <text x="160" y="3" class="mono tiny" fill="#f6e400" opacity=".85">FALLBACK: IF ONE IS REFUSED, THE OTHER LOADS</text>
+  </g>
+
+  <!-- shared detection band -->
+  <g transform="translate(40 318)">
+    <rect x="0" y="0" width="1120" height="34" rx="17" fill="#2ad9ff" fill-opacity=".05" stroke="#2ad9ff" stroke-opacity=".24"/>
+    <circle cx="22" cy="17" r="3" fill="#2ad9ff" class="pulse"/>
+    <text x="38" y="21" class="mono node" fill="#2ad9ff">DETECTION</text>
+    <text x="142" y="21" class="mono sub">DRIVER LOAD 7045 / 4697 · DEVICE HANDLE · IOCTL CORRELATION · BLOCKLIST SNAPSHOT</text>
+    <text x="1100" y="21" text-anchor="end" class="mono tiny">SHARED DEFENSE</text>
+  </g>
+</svg>

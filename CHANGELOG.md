@@ -12,6 +12,8 @@ All notable changes to this repository are documented here.
 
 ## 1.0.0 (research release) - in progress
 
+- Animated README hero, a two-lane driver chain map, and section
+  dividers in the project palette.
 - Service ownership model: only self-created services are cleaned up.
 - Sample hash validation before any driver registration.
 - Stable JSON output contract (docs/architecture.md).
