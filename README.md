@@ -1,6 +1,4 @@
-<p align="center">
-  <img src="assets/hero.svg" alt="0xCr0ssCrush - crossed cyan and magenta driver blades over a kernel ring, with a driver surface panel for DCRCVDrv.sys and Alinubx.sys" width="100%">
-</p>
+# 0xCr0ssCrush
 
 <p align="center">
   <a href="docs/reproduction.md"><img src="https://img.shields.io/badge/Windows-10%20%7C%2011-07080d?style=flat-square&amp;logo=windows&amp;logoColor=2ad9ff" alt="Windows 10 and 11"></a>
@@ -10,11 +8,6 @@
   <a href="https://github.com/DeathShotXD/0xCr0ssCrush/stargazers"><img src="https://img.shields.io/github/stars/DeathShotXD/0xCr0ssCrush?style=flat-square&amp;color=f6e400" alt="GitHub stars"></a>
 </p>
 
-<p align="center">
-  <strong>Two signed drivers. One process-termination primitive.</strong><br>
-  DCRCVDrv.sys and Alinubx.sys, mapped from the kernel up.
-</p>
-
 Two signed drivers. One dangerous kernel primitive. 0xCr0ssCrush is a
 Windows BYOVD research project covering the DCRCVDrv.sys and Alinubx.sys
 drivers abused by the Cruciferra malware-as-a-service loader: their
@@ -22,14 +15,12 @@ interfaces, their kernel primitives, their provenance, and how to
 detect and defend against their abuse.
 
 <p align="center">
-  <img src="assets/divider.svg" alt="" width="100%">
+  <img src="assets/crosscrush-logo.png" alt="0xCr0ssCrush logo" width="340">
 </p>
+
+<br>
 
 ## What is 0xCr0ssCrush?
-
-<p align="center">
-  <img src="assets/crosscrush-logo.png" alt="0xCr0ssCrush logo" width="300">
-</p>
 
 A research harness and analysis package for two vulnerable signed
 drivers:
@@ -46,7 +37,7 @@ drivers:
 <br>
 
 <p align="center">
-  <img src="assets/divider.svg" alt="" width="100%">
+  <img src="assets/crosscrush-banner.png" alt="0xCr0ssCrush - Windows BYOVD research" width="100%">
 </p>
 
 ## Why this matters
